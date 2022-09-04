@@ -1,5 +1,4 @@
 # SocialApp
-> U CAN DOWLOAD APK IN HERE
 ![1](https://user-images.githubusercontent.com/69583663/188297974-896c3d55-5902-4aba-abdc-12101b980a32.png)
 ![2](https://user-images.githubusercontent.com/69583663/188297976-8bb5a497-7e3a-48a1-a6e3-ce271d5cf233.png)
 ![3](https://user-images.githubusercontent.com/69583663/188297978-6645b772-71d8-480a-8813-2680a572abe8.png)
@@ -19,4 +18,6 @@
 ### Future plans
 1. Can send image to your friend
 2. Can see other people's profile
+> U CAN DOWLOAD APK IN HERE
+
 > If u have any ideas or suggestions, please contact me by email akaidosuki@gmail.com
