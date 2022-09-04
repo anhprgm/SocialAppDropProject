@@ -18,6 +18,6 @@
 ### Future plans
 1. Can send image to your friend
 2. Can see other people's profile
-> U CAN DOWLOAD APK IN HERE
+> U CAN DOWLOAD APK IN HERE: https://github.com/anhprgm/SocialApp/blob/master/app-debug.apk
 
 > If u have any ideas or suggestions, please contact me by email akaidosuki@gmail.com
