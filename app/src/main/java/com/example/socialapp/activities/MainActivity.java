@@ -8,8 +8,6 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.socialapp.adapters.RecentConversionsAdapter;
 import com.example.socialapp.databinding.ActivityMainBinding;
 import com.example.socialapp.listeners.ConversionListener;
@@ -29,7 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ConversionListener {
+public class MainActivity extends BaseActivity implements ConversionListener {
     private ActivityMainBinding binding;
     private PreferenceManager preferenceManager;
     private List<ChatMessage> conversions;
@@ -46,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
         getToken();
         setListeners();
         listenConversation();
+        ProfileUser();
+
     }
     private void init(){
         conversions = new ArrayList<>();
@@ -62,9 +62,16 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
         byte[] bytes = Base64.decode(preferenceManager.getString(Constants.KEY_IMAGE), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         binding.imageProfile.setImageBitmap(bitmap);
+
     }
     private void showToast(String message){
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+    private void ProfileUser(){
+        binding.imageProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+            startActivity(intent);
+        });
     }
     private void listenConversation() {
         database.collection(Constants.KEY_COLLECTION_CONVERSIONS)
@@ -79,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
             return;
         }
         if (value != null) {
+
             for (DocumentChange documentChange : value.getDocumentChanges()) {
                 if (documentChange.getType() == DocumentChange.Type.ADDED) {
                     String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
@@ -114,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
             conversionsAdapter.notifyDataSetChanged();
             binding.conversionsRecyclerView.smoothScrollToPosition(0);
             binding.conversionsRecyclerView.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
+
         }
     };
 
@@ -122,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(this::updateToken);
     }
     private void updateToken(String token){
+        preferenceManager.putString(Constants.KEY_FCM_TOKEN, token);
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_USERS).document(
@@ -129,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
                 );
         documentReference.update(Constants.KEY_FCM_TOKEN, token)
                 .addOnSuccessListener(unused -> showToast("Login successfully"))
-                .addOnFailureListener(e -> showToast("Unable to update token"));
+                .addOnFailureListener(e -> showToast("Reinstall app"));
     }
     private void signOut(){
         showToast("Signing Out..");
@@ -146,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
                     startActivity(new Intent(getApplicationContext(), SignInActivity.class));
                     finish();
                 })
-                .addOnFailureListener(e -> showToast("Unable to sign out"));
+                .addOnFailureListener(e -> showToast("Reinstall app"));
     }
 
     @Override
@@ -155,4 +164,5 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
         intent.putExtra(Constants.KEY_USER, user);
         startActivity(intent);
     }
+
 }

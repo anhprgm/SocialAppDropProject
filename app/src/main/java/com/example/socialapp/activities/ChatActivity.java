@@ -2,16 +2,21 @@ package com.example.socialapp.activities;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
+import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 
 import com.example.socialapp.adapters.ChatAdapter;
 import com.example.socialapp.databinding.ActivityChatBinding;
+import com.example.socialapp.listeners.UserListener;
 import com.example.socialapp.models.ChatMessage;
 import com.example.socialapp.models.User;
+import com.example.socialapp.network.ApiClient;
+import com.example.socialapp.network.ApiService;
 import com.example.socialapp.utilities.Constants;
 import com.example.socialapp.utilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,6 +27,10 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,8 +39,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
-public class ChatActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class ChatActivity extends BaseActivity implements UserListener {
     private ActivityChatBinding binding;
     private User receiverUser;
     private List<ChatMessage> chatMessages;
@@ -39,6 +53,8 @@ public class ChatActivity extends AppCompatActivity {
     private PreferenceManager preferenceManager;
     private FirebaseFirestore database;
     private String conversionId = null ;
+    private Boolean isReceiverAvailable = false;
+    private UserListener userListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +65,7 @@ public class ChatActivity extends AppCompatActivity {
         loadReceiverDetails();
         init();
         listenMessages();
+        binding.imageProfile.setImageBitmap(getBitmapFromEncodedString(receiverUser.image));
     }
     private void init(){
         preferenceManager = new PreferenceManager(getApplicationContext());
@@ -82,8 +99,91 @@ public class ChatActivity extends AppCompatActivity {
             conversion.put(Constants.KEY_TIMESTAMP, new Date());
             addConversion(conversion);
         }
+        if (!isReceiverAvailable) {
+            try {
+                JSONArray tokens = new JSONArray();
+                tokens.put(receiverUser.token);
+
+                JSONObject data = new JSONObject();
+                data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+                data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
+                data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
+                data.put(Constants.KEY_MESSAGE, binding.inputMassage.getText().toString());
+
+                JSONObject body = new JSONObject();
+                body.put(Constants.REMOTE_MSG_DATA, data);
+                body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
+
+                sendNotification(body.toString());
+            } catch (Exception exception) {
+                showToast(exception.getMessage());
+            }
+        }
         binding.inputMassage.setText(null);
     }
+    private void showToast(String message){
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+    private void sendNotification(String messageBody){
+        ApiClient.getClient().create(ApiService.class).sendMessage(
+                Constants.getRemoteMsgHeaders(),
+                messageBody
+        ).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(@NonNull Call<String> call,@NonNull Response<String> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        if (response.body() != null) {
+                            JSONObject responseJson = new JSONObject(response.body());
+                            JSONArray results = responseJson.getJSONArray("results");
+                            if (responseJson.getInt("failure") == 1) {
+                                JSONObject error = (JSONObject) results.get(0);
+                                showToast(error.getString("error"));
+                                return;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    showToast("Notification sent successfully");
+                } else {
+                    showToast("error: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<String> call,@NonNull Throwable t) {
+                showToast(t.getMessage());
+            }
+        });
+    }
+    private void listenAvailabilityOfReceiver() {
+        database.collection(Constants.KEY_COLLECTION_USERS).document(
+                receiverUser.id
+        ).addSnapshotListener(ChatActivity.this, (value, error) -> {
+            if (error != null) {
+                return;
+            }
+            if (value != null) {
+                if (value.getLong(Constants.KEY_AVAILABILITY) != null) {
+                    int availability = Objects.requireNonNull(
+                            value.getLong(Constants.KEY_AVAILABILITY)
+                    ).intValue();
+                    isReceiverAvailable = availability == 1;
+                }
+                receiverUser.token = value.getString(Constants.KEY_FCM_TOKEN);
+            }
+            if (isReceiverAvailable) {
+                binding.textAvailability.setText("ONLINE");
+                binding.textAvailability.setTextColor(Color.GREEN);
+            } else {
+                binding.textAvailability.setText("OFFLINE");
+                binding.textAvailability.setTextColor(Color.RED);
+            }
+        });
+    }
+
+
     private void listenMessages(){
         database.collection(Constants.KEY_COLLECTION_CHAT)
                 .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
@@ -182,4 +282,24 @@ public class ChatActivity extends AppCompatActivity {
             conversionId = documentSnapshot.getId();
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        listenAvailabilityOfReceiver();
+    }
+
+    @Override
+    public void onUserClicked(User user) {
+
+    }
+
+    @Override
+    public void initiateVideoCall(User user) {
+
+    }
+
+    @Override
+    public void initiateAudioCall(User user) {
+    }
 }

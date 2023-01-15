@@ -41,4 +41,5 @@
         android:textSize="@dimen/_8ssp"
         app:layout_constraintStart_toStartOf="@id/textMessage"
         app:layout_constraintTop_toBottomOf="@id/textMessage"/>
+        android:src="@drawable/app_logo"
 </androidx.constraintlayout.widget.ConstraintLayout>

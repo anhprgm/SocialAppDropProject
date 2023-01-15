@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -51,9 +52,16 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
             binding = itemContainerUserBinding;
         }
         void setUserData(User user){
+            if (user.active == 1) {
+                binding.imageOnline.setVisibility(View.VISIBLE);
+            } else {
+                binding.imageOnline.setVisibility(View.GONE);
+            }
             binding.textName.setText(user.name);
             binding.textEmail.setText(user.email);
             binding.imageProfile.setImageBitmap(getUserImage(user.image));
+            binding.imageAudioCall.setOnClickListener(v -> userListener.initiateAudioCall(user));
+            binding.imageVideoCall.setOnClickListener(v -> userListener.initiateVideoCall(user));
             binding.getRoot().setOnClickListener(view -> userListener.onUserClicked(user));
         }
     }

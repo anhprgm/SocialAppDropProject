@@ -3,6 +3,7 @@ package com.example.socialapp.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -110,28 +111,40 @@ public class SignUpActivity extends AppCompatActivity {
     );
     private Boolean isValidSignUpDetails(){
         if(encodedImage == null){
-            showToast("Sellect Profile image");
+            showToast("Select Profile image");
             return false;
         }else if (binding.inputName.getText().toString().trim().isEmpty()){
-            showToast("Enter Name");
+            binding.inputName.setHint("Enter Name");
+            binding.inputName.setHintTextColor(Color.RED);
+//            showToast("Enter Name");
             return false;
         }else if(binding.inputEmail.getText().toString().trim().isEmpty()){
-            showToast("Enter Email");
+            binding.inputEmail.setHint("Enter Email");
+            binding.inputEmail.setHintTextColor(Color.RED);
+//            showToast("Enter Email");
             return false;
         }else if(!Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.getText().toString()).matches()){
-            showToast("Enter valid email");
+            binding.inputEmail.setHint("Enter valid email");
+            binding.inputEmail.setHintTextColor(Color.RED);
+//            showToast("Enter valid email");
             return false;
         }else if(binding.inputPassword.getText().toString().trim().isEmpty()){
-            showToast("Input password");
+            binding.inputPassword.setHint("Input Password");
+            binding.inputPassword.setHintTextColor(Color.RED);
+//            showToast("Input password");
             return false;
         }else if(binding.inputPassword.getText().toString().trim().length() < 6){
-            showToast("Password must be more than six characters ");
+            binding.inputPassword.setHint("Password must be more than six characters");
+            binding.inputPassword.setHintTextColor(Color.RED);
+//            showToast("Password must be more than six characters ");
             return false;
         }else if(binding.inputConfirmPassword.getText().toString().trim().isEmpty()){
-            showToast("Confirm your password");
+            binding.inputConfirmPassword.setHint("Confirm your password");
+            binding.inputConfirmPassword.setHintTextColor(Color.RED);
             return false;
         }else if(!binding.inputPassword.getText().toString().equals(binding.inputConfirmPassword.getText().toString())){
-            showToast("Password and confirm password must be same");
+            binding.inputConfirmPassword.setHint("Password and confirm password must be same");
+            binding.inputConfirmPassword.setHintTextColor(Color.RED);
             return false;
         }else{
             return true;

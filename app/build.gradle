@@ -32,7 +32,8 @@ android {
 }
 
 dependencies {
-//    implementation platform('com.google.firebase:firebase-bom:30.2.0')
+    implementation "androidx.core:core:1.8.0"
+    implementation platform('com.google.firebase:firebase-bom:30.2.0')
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -45,8 +46,16 @@ dependencies {
     //round imageView
     implementation 'com.makeramen:roundedimageview:2.3.0'
     //firebase
+    implementation 'com.google.firebase:firebase-iid:21.1.0'
     implementation 'com.google.firebase:firebase-messaging:23.0.6'
     implementation 'com.google.firebase:firebase-firestore:24.2.1'
     //MultiDex
     implementation 'androidx.multidex:multidex:2.0.1'
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+    //Refresh layout
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    //Material design
+    implementation 'com.google.android.material:material:1.6.1'
 }

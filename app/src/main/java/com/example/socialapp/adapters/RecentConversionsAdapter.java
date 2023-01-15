@@ -3,7 +3,9 @@ package com.example.socialapp.adapters;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -13,13 +15,10 @@ import com.example.socialapp.databinding.ItemContainerRecentConversionBinding;
 import com.example.socialapp.listeners.ConversionListener;
 import com.example.socialapp.models.ChatMessage;
 import com.example.socialapp.models.User;
-import com.example.socialapp.utilities.Constants;
 
 import java.util.List;
 
 public class RecentConversionsAdapter  extends RecyclerView.Adapter<RecentConversionsAdapter.ConversionViewHolder>{
-
-
     private final List<ChatMessage> chatMessages;
     private final ConversionListener conversionListener;
 
@@ -53,22 +52,28 @@ public class RecentConversionsAdapter  extends RecyclerView.Adapter<RecentConver
 
     class ConversionViewHolder extends RecyclerView.ViewHolder{
         ItemContainerRecentConversionBinding binding;
-
         ConversionViewHolder(ItemContainerRecentConversionBinding itemContainerRecentConversionBinding) {
             super(itemContainerRecentConversionBinding.getRoot());
             binding = itemContainerRecentConversionBinding;
         }
         void setData(ChatMessage chatMessage){
+
             binding.imageProfile.setImageBitmap(getConversionImage(chatMessage.conversionImage));
             binding.textName.setText(chatMessage.conversionName);
             binding.textRecentMessage.setText(chatMessage.message);
             binding.getRoot().setOnClickListener(v -> {
                 User user = new User();
+                if (user.active == 1) {
+                    binding.imageOnline.setVisibility(View.VISIBLE);
+                } else {
+                    binding.imageOnline.setVisibility(View.GONE);
+                }
                 user.id = chatMessage.conversionId;
                 user.name = chatMessage.conversionName;
                 user.image = chatMessage.conversionImage;
                 conversionListener.onConversionClicked(user);
             });
+
         }
     }
 

@@ -8,9 +8,9 @@
     android:background="@color/primary"
     tools:context=".activities.MainActivity">
     <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imageProfile"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
-        android:id="@+id/imageProfile"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_12sdp"
         android:background="@drawable/background_icon"
@@ -18,6 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:riv_corner_radius="@dimen/_8sdp" />
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageSignOut"
         android:layout_width="@dimen/_35sdp"
@@ -27,58 +28,69 @@
         android:padding="@dimen/_6sdp"
         android:src="@drawable/ic_logout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
+        android:id="@+id/textName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:id="@+id/textName"
-        android:layout_marginEnd="@dimen/_8sdp"
         android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_100sdp"
         android:ellipsize="end"
-        android:gravity="center"
+        android:gravity="start"
         android:maxLines="1"
         android:textColor="@color/white"
         android:textSize="@dimen/_14ssp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/imageProfile"
         app:layout_constraintEnd_toStartOf="@id/imageSignOut"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@id/imageProfile"
-        app:layout_constraintTop_toTopOf="@+id/imageProfile"/>
-    <FrameLayout
+        app:layout_constraintTop_toTopOf="@+id/imageProfile"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/Conversation"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_20ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textName" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_30sdp"
         android:background="@drawable/background_content_bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageProfile">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/conversionsRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:orientation="vertical"
-            android:overScrollMode="never"
-            android:padding="@dimen/_20sdp"
-            android:visibility="gone"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-        <ProgressBar
-            android:layout_width="@dimen/_25sdp"
-            android:layout_height="@dimen/_25sdp"
-            android:id="@+id/progressBar"
-            android:layout_gravity="center"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/conversionsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:overScrollMode="never"
+                android:padding="@dimen/_20sdp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabNewChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/fabNewChat"
         android:layout_marginEnd="@dimen/_24sdp"
         android:layout_marginBottom="@dimen/_24sdp"
+        android:backgroundTint="#F1B5CA"
         android:contentDescription="@string/app_name"
         android:src="@drawable/ic_add"
-        android:backgroundTint="#BB7CCC"
+        android:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:tint="@color/white"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
